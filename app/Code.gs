@@ -120,11 +120,13 @@ function asciidocHandleChild(child, i, nextChild) {
         && !isEmptyText(nextChild)) {
       // Keep paragraph
       if (nextChild.getHeading() == DocumentApp.ParagraphHeading.NORMAL) {
-        result = result + ' +';
+        result = result + ' \n'; // this doesn't seem to be working as you want it; was ' +'
       } else {
         result = result + '\n';
       }
     }
+  } else if (child.getType() == DocumentApp.ElementType.INLINE_IMAGE) {
+    result = result + asciidocHandleImage(child);
   } else if (child.getType() == DocumentApp.ElementType.TABLE) {
     result = result + asciidocHandleTable(child);
   } else if (child.getType() == DocumentApp.ElementType.LIST_ITEM) {
@@ -326,4 +328,17 @@ function isTextCode(text, offset) {
   // This works for all Google Fonts as of 2016-10-21.
   // See ES6 String.prototype.endsWith(str, pos).
   return fontFamily.indexOf(' Mono') === fontFamily.length - 5;
+}
+
+// DE Code Below
+
+
+// images
+
+function asciidocHandleImage(child) {
+  // do something
+}
+
+function asciidocHandleFootnote(child) {
+  // do something
 }

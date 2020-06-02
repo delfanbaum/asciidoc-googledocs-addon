@@ -1,0 +1,6 @@
+= To Do
+
+Desired functionality:
+
+* Images
+* footnotes
