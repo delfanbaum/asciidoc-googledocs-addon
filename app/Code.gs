@@ -110,7 +110,9 @@ function isEmptyText(child) {
 
 function asciidocHandleChild(child, i, nextChild) {
   var result = '';
-  if (child.getType() == DocumentApp.ElementType.PARAGRAPH) {
+  // Only select non-heading paragraphs for now to avoid... headaches.
+  if (child.getType() == DocumentApp.ElementType.PARAGRAPH &&
+      child.getHeading() == DocumentApp.ParagraphHeading.NORMAL) {
     // add logic here to get the children of the paragraph
     var rangeParaElements = child.getNumChildren();
     for (var q = 0; q < rangeParaElements; q++) {
@@ -118,12 +120,26 @@ function asciidocHandleChild(child, i, nextChild) {
       if (paraElement.getType() == DocumentApp.ElementType.FOOTNOTE) {
         result = result + asciidocHandleFootnote(paraElement);
       } else {
-       // result = result + asciidocHandleTitle(paraElement);
-      //  result = result + asciidocHandleText(paraElement);
+        result = result + asciidocHandleSimpleText(paraElement);
       }
     }
     // simplfiy and just add new line after every paragraph
-    result = result + 'Paragraph here \n';
+    result = result + '\n';
+  } else if (child.getType() == DocumentApp.ElementType.PARAGRAPH) {
+    result = result + asciidocHandleTitle(child);
+    result = result + asciidocHandleText(child);
+    if (child.getHeading() == DocumentApp.ParagraphHeading.NORMAL
+        && !isEmptyText(child)
+        && typeof nextChild !== 'undefined'
+        && nextChild.getType() == DocumentApp.ElementType.PARAGRAPH
+        && !isEmptyText(nextChild)) {
+      // Keep paragraph
+      if (nextChild.getHeading() == DocumentApp.ParagraphHeading.NORMAL) {
+        result = result + ' +';
+      } else {
+        result = result + '\n';
+      }
+    }
   } else if (child.getType() == DocumentApp.ElementType.TABLE) {
     result = result + asciidocHandleTable(child);
   } else if (child.getType() == DocumentApp.ElementType.LIST_ITEM) {
@@ -140,6 +156,26 @@ function asciidocHandleText(child) {
     var text = child.editAsText();
     var textAttributeIndices = text.getTextAttributeIndices();
     var content = child.getText();
+    if (textAttributeIndices.length > 0) {
+      for (var j = 0; j < textAttributeIndices.length; j++) {
+        var offset = textAttributeIndices[j];
+        var nextOffset = textAttributeIndices[j + 1];
+        var distinctContent = content.substring(offset, nextOffset);
+        result = result + asciidocHandleFontStyle(text, offset, distinctContent);
+      }
+    } else {
+      result = content;
+    }
+  }
+  return result;
+}
+
+function asciidocHandleSimpleText(paraElement) {
+  var result = '';
+  if (paraElement.getType() == DocumentApp.ElementType.TEXT) {
+    var text = paraElement.editAsText();
+    var textAttributeIndices = text.getTextAttributeIndices();
+    var content = paraElement.getText();
     if (textAttributeIndices.length > 0) {
       for (var j = 0; j < textAttributeIndices.length; j++) {
         var offset = textAttributeIndices[j];
