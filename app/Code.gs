@@ -44,6 +44,8 @@ function showDialog() {
 function asciidocify() {
   var selection = DocumentApp.getActiveDocument().getSelection();
   var elements = [];
+  var asciidoc = '';
+  // see if section or whole document
   if (selection && 'selection' == CacheService.getPrivateCache().get('convertMode')) {
     var rangeElements = selection.getRangeElements();
     for (var i = 0; i < rangeElements.length; i++) {
@@ -54,8 +56,13 @@ function asciidocify() {
     for (var i = 0; i < body.getNumChildren(); i++) {
       elements.push(body.getChild(i));
     }
+    // if whole document, include document title at begining
+    var documentTitle = DocumentApp.getActiveDocument().getName();
+    asciidoc = asciidoc + '= ' + documentTitle.trim() + '\n'
+    // get editors?
+    var editors = DocumentApp.getActiveDocument().getEditors();
+    asciidoc = asciidoc + editors.join(' ').trim() + '\n'
   }
-  var asciidoc = '';
   var insideCodeBlock = false;
   var elementsLength = elements.length;
   for (var i = 0 ; i < elementsLength; i++) {
@@ -171,6 +178,7 @@ function asciidocHandleText(child) {
 }
 
 function asciidocHandleSimpleText(paraElement) {
+  // it would be good to combine this with the above function, but for some reason the "or" breaks it...
   var result = '';
   if (paraElement.getType() == DocumentApp.ElementType.TEXT) {
     var text = paraElement.editAsText();
@@ -363,17 +371,17 @@ function isTextCode(text, offset) {
   return fontFamily.indexOf(' Mono') === fontFamily.length - 5;
 }
 
-// DE
-
 function asciidocHandleFootnote(paraElement) {
   var result = '';
-  var footnoteContent = paraElement.getFootnoteContents();
-  // footnoteContent may contain ListItem or Paragraph elements, so run as normal:
-  /* TO DO:
-     - process text normally (i.e., figure out what's breaking the asciidoc handlers)
-     - remove initial space if the above doesn't fix.
-  */
-  result = result + 'footnote:[' + footnoteContent.getText() + ']';
-  //result = result + asciidocHandleText(footnoteContent)
+  var footnoteSection = paraElement.getFootnoteContents();
+  var rangeFootnoteElements = footnoteSection.getNumChildren();
+  var footnoteText = '';
+  // loop through Footnote Elements
+  for (i = 0; i < rangeFootnoteElements ; i++ ){
+    footnoteElement = footnoteSection.getChild(i);
+    footnoteText = footnoteText + asciidocHandleText(footnoteElement);
+  }
+  // put it all together and remove leading/trailing spaces
+  result = result + 'footnote:[' + footnoteText.trim() + ']';
   return result;
 }
