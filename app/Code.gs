@@ -111,22 +111,19 @@ function isEmptyText(child) {
 function asciidocHandleChild(child, i, nextChild) {
   var result = '';
   if (child.getType() == DocumentApp.ElementType.PARAGRAPH) {
-    result = result + asciidocHandleTitle(child);
-    result = result + asciidocHandleText(child);
-    if (child.getHeading() == DocumentApp.ParagraphHeading.NORMAL
-        && !isEmptyText(child)
-        && typeof nextChild !== 'undefined'
-        && nextChild.getType() == DocumentApp.ElementType.PARAGRAPH
-        && !isEmptyText(nextChild)) {
-      // Keep paragraph
-      if (nextChild.getHeading() == DocumentApp.ParagraphHeading.NORMAL) {
-        result = result + ' \n'; // this doesn't seem to be working as you want it; was ' +'
+    // add logic here to get the children of the paragraph
+    var rangeParaElements = child.getNumChildren();
+    for (var q = 0; q < rangeParaElements; q++) {
+      paraElement = child.getChild(q)
+      if (paraElement.getType() == DocumentApp.ElementType.FOOTNOTE) {
+        result = result + asciidocHandleFootnote(paraElement);
       } else {
-        result = result + '\n';
+       // result = result + asciidocHandleTitle(paraElement);
+      //  result = result + asciidocHandleText(paraElement);
       }
     }
-  } else if (child.getType() == DocumentApp.ElementType.INLINE_IMAGE) {
-    result = result + asciidocHandleImage(child);
+    // simplfiy and just add new line after every paragraph
+    result = result + 'Paragraph here \n';
   } else if (child.getType() == DocumentApp.ElementType.TABLE) {
     result = result + asciidocHandleTable(child);
   } else if (child.getType() == DocumentApp.ElementType.LIST_ITEM) {
@@ -330,15 +327,17 @@ function isTextCode(text, offset) {
   return fontFamily.indexOf(' Mono') === fontFamily.length - 5;
 }
 
-// DE Code Below
+// DE
 
-
-// images
-
-function asciidocHandleImage(child) {
-  // do something
-}
-
-function asciidocHandleFootnote(child) {
-  // do something
+function asciidocHandleFootnote(paraElement) {
+  var result = '';
+  var footnoteContent = paraElement.getFootnoteContents();
+  // footnoteContent may contain ListItem or Paragraph elements, so run as normal:
+  /* TO DO:
+     - process text normally (i.e., figure out what's breaking the asciidoc handlers)
+     - remove initial space if the above doesn't fix.
+  */
+  result = result + 'footnote:[' + footnoteContent.getText() + ']';
+  //result = result + asciidocHandleText(footnoteContent)
+  return result;
 }
