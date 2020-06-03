@@ -120,12 +120,17 @@ function asciidocHandleChild(child, i, nextChild) {
   // Only select non-heading paragraphs for now to avoid... headaches.
   if (child.getType() == DocumentApp.ElementType.PARAGRAPH &&
       child.getHeading() == DocumentApp.ParagraphHeading.NORMAL) {
-    // add logic here to get the children of the paragraph
+    // add logic deal with children of the paragraph
     var rangeParaElements = child.getNumChildren();
     for (var q = 0; q < rangeParaElements; q++) {
       paraElement = child.getChild(q)
       if (paraElement.getType() == DocumentApp.ElementType.FOOTNOTE) {
         result = result + asciidocHandleFootnote(paraElement);
+      } else if (paraElement.getType() ==
+                 DocumentApp.ElementType.INLINE_IMAGE) {
+        result = result + asciidocHandleImage(paraElement);
+      } else if (paraElement.getType() == DocumentApp.ElementType.PAGE_BREAK){
+        result = result + '\n\n<<<\n\n' // add page break
       } else {
         result = result + asciidocHandleSimpleText(paraElement);
       }
@@ -384,4 +389,15 @@ function asciidocHandleFootnote(paraElement) {
   // put it all together and remove leading/trailing spaces
   result = result + 'footnote:[' + footnoteText.trim() + ']';
   return result;
+}
+
+function asciidocHandleImage(paraElement) {
+  figtitle = figdesc = ''
+  if (paraElement.getAltTitle() != null) {
+    figtitle = paraElement.getAltTitle().trim()
+  }
+  if (paraElement.getAltDescription() != null ) {
+    figdesc = paraElement.getAltDescription()
+  }
+  return '\n[' + figtitle.replace(/ /g,'-').toLowerCase() + ']\n' + '.' + figtitle + figdesc + '\nIMAGE PLACEHOLDER';
 }
