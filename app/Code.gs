@@ -348,8 +348,6 @@ function asciidocHandleList(child) {
     // Should never happen?
     result = child.getText();
   }
-  // Add a blank line after a list
-  result = result + '\n';
   return result;
 }
 

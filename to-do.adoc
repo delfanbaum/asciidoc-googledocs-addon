@@ -5,6 +5,7 @@ Desired functionality:
 * Images
 * Internal/External Xrefs (how are they usually handled in GDocs anyway?)
 * Better code block demarkation/recognition
+* Does not seem to handle lists as expected (probably I need to learn how lists work); would like a blank line after a list group.
 
 Proof of concept done:
 * footnotes
