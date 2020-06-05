@@ -3,4 +3,8 @@
 Desired functionality:
 
 * Images
+* Internal/External Xrefs (how are they usually handled in GDocs anyway?)
+* Better code block demarkation/recognition
+
+Proof of concept done:
 * footnotes
