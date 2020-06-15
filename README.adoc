@@ -3,18 +3,20 @@
 Convert your Google Docs&trade; into AsciiDoc.
 Forked from Guillaume Grossetie's https://chrome.google.com/webstore/detail/asciidoc-processor/eghlmnhjljbjodpeehjjcgfcjegcfbhk[add-on].
 
-.Experimental Features in this Fork
-****
+== Experimental Features in this Fork
+
 This fork has currently added the following functionality:
+
 * Footnote support
 
 It's hoping to eventually include support for:
+
 * Images
 * Internal/External Xrefs
 * Better code block demarkation/recognition (this may be a GDoc style issue)
 * Better list handling (Does not seem to handle lists as expected; would like a blank line after a list group, however this may be a limitation of google docs)
 
-****
+
 
 == Usage
 
