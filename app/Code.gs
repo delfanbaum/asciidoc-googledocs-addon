@@ -281,6 +281,7 @@ function asciidocHandleFontStyle(text, offset, distinctContent) {
 
 function asciidocHandleTitle(child) {
   var result = '';
+//  var id = child.getLinkUrl() // how to get an ID for xrefs?
   var headingLevel;
   if (child.getText() && child.getText().trim() !== '') {
     if (child.getHeading() == DocumentApp.ParagraphHeading.TITLE) {
@@ -299,7 +300,8 @@ function asciidocHandleTitle(child) {
       headingLevel = 7;
     }
     if (typeof headingLevel !== 'undefined') {
-      result = new Array(headingLevel + 1).join('=') + ' ' + child.getText() + '\n';
+    //  result = '[[' + id + ']]\n';
+      result = result + new Array(headingLevel + 1).join('=') + ' ' + child.getText() + '\n';
     }
   }
   return result;

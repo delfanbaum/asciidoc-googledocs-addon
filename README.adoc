@@ -1,17 +1,27 @@
 = AsciiDoc Processor Add-on for Google Docs&trade;
-Guillaume Grossetie
-:webstore: https://chrome.google.com/webstore/detail/asciidoc-processor/eghlmnhjljbjodpeehjjcgfcjegcfbhk
 
 Convert your Google Docs&trade; into AsciiDoc.
+Forked from Guillaume Grossetie's https://chrome.google.com/webstore/detail/asciidoc-processor/eghlmnhjljbjodpeehjjcgfcjegcfbhk[add-on].
 
-image::https://developer.chrome.com/webstore/images/ChromeWebStore_Badge_v2_206x58.png[link="{webstore}"]
+.Experimental Features in this Fork
+****
+This fork has currently added the following functionality:
+* Footnote support
+
+It's hoping to eventually include support for:
+* Images
+* Internal/External Xrefs
+* Better code block demarkation/recognition (this may be a GDoc style issue)
+* Better list handling (Does not seem to handle lists as expected; would like a blank line after a list group, however this may be a limitation of google docs)
+
+****
 
 == Usage
 
- 1. Install extension from {webstore}[Chrome Web Store]
- 1. Open a document or create a new one
- 1. Under the *Add-ons* menu, click *AsciiDoc Processor > Convert all* to convert the entire document into AsciiDoc.
- 1. Copy and paste the AsciiDoc output anywhere you want!
+ . Follow the steps below in <<testing-unpublished-code>>.
+ . Open a document or create a new one
+ . Under the *Add-ons* menu, click *AsciiDoc Processor > Convert all* to convert the entire document into AsciiDoc.
+ . Copy and paste the AsciiDoc output anywhere you want!
 
 NOTE: To convert a part of your document, select some text and click *AsciiDoc Processor > Convert selection*
 
@@ -24,11 +34,12 @@ This Add-on supports the following text formats :
  * Tables
  * Code bloc
  * Lists (unordered and ordered)
- 
+
 == Development
 
 As a Google Apps add-on, this project is written in JavaScript and HTML. The file `app/Code.gs` contains the JavaScript functions; `app/Dialog.html` is the template for calling the conversion functions and displaying the processed output.
 
+[[testing-unpublished-code]]
 === Testing unpublished code
 
 To safely test the code in your own Google Apps environment, create a new Google Apps project out of these files -- or your modified versions! -- then create and run test deployments using these simple steps.
@@ -57,6 +68,8 @@ To safely test the code in your own Google Apps environment, create a new Google
 
 * This will open your document in a new tab; your new test addon will be listed under *Add-ons*!
 
+////
 == Help
 
 If you discover errors or ommisions in the source code or documentation, please don't hesitate to https://github.com/Mogztter/asciidoc-googledocs-addon/issues[submit an issue or open a pull request with a fix].
+////
