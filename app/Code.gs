@@ -131,6 +131,8 @@ function asciidocHandleChild(child, i, nextChild) {
         result = result + asciidocHandleImage(paraElement);
       } else if (paraElement.getType() == DocumentApp.ElementType.PAGE_BREAK){
         result = result + '\n\n<<<\n\n' // add page break
+      } else if (paraElement.getType() == DocumentApp.ElementType.EQUATION) {
+        result = result + asciidocHandleEquation(paraElement);
       } else {
         result = result + asciidocHandleSimpleText(paraElement);
       }
@@ -156,13 +158,6 @@ function asciidocHandleChild(child, i, nextChild) {
     result = result + asciidocHandleTable(child);
   } else if (child.getType() == DocumentApp.ElementType.LIST_ITEM) {
     result = result + asciidocHandleList(child);
-  } else if (child.getType() == DocumentApp.ElementType.EQUATION ||
-             child.getType() == DocumentApp.ElementType.EQUATION_FUNCTION	 ||
-             child.getType() ==
-                DocumentApp.ElementType.EQUATION_FUNCTION_ARGUMENT_SEPARATOR ||
-             child.getType() == DocumentApp.ElementType.EQUATION_SYMBOL
-            ) {
-    result = result + asciidocHandleEquation(child);
   } else {
     result = result + child.getText();
   }
@@ -410,6 +405,52 @@ function asciidocHandleImage(paraElement) {
   return '\n[' + figtitle.replace(/ /g,'-').toLowerCase() + ']\n' + '.' + figtitle + figdesc + '\nIMAGE PLACEHOLDER';
 }
 
+function handleEquationFunction(child){
+  result = ''
+  if (child.getNumChildren() > 0) {
+    for (g = 0; g < child.getNumChildren(); g++){
+      grandchild = child.getChild(g)
+      if (grandchild.getType() == DocumentApp.ElementType.TEXT){
+        result = result + grandchild.getText()
+      } else if (grandchild.getType() == DocumentApp.ElementType.EQUATION_SYMBOL){
+        result = result + grandchild.getCode()
+      } else if (grandchild.getType() == DocumentApp.ElementType.EQUATION_FUNCTION_ARGUMENT_SEPARATOR){
+        result = result + grandchild.getType().toString()
+      } else {
+        result = result + grandchild.getType().toString()
+      }
+    }
+  } else {
+    result = result + child.getCode()
+  }
+  return result
+}
+
 function asciidocHandleEquation(equation) {
-  return "Equation here~!"
+  var result = ''
+  /* Cases:
+    - EquationFunction
+    - EquationSymbol
+    - Text */
+    /*
+
+
+    IceCreamSales=EQUATION_SYMBOLEQUATION_FUNCTION_ARGUMENT_SEPARATORT.Temperature+EQUATION_SYMBOLEQUATION_FUNCTION_ARGUMENT_SEPARATORS.SummerMonth+EQUATION_SYMBOLEQUATION_FUNCTION_ARGUMENT_SEPARATORC.IcedCoffeeSales
+
+    */
+  // loop
+  for (i = 0; i < equation.getNumChildren() ; i++ ){
+    var child = equation.getChild(i)
+    if (child.getType() == DocumentApp.ElementType.TEXT){
+      result = result + child.getText()
+    } else if (child.getType() == DocumentApp.ElementType.EQUATION_FUNCTION) {
+        result = result + child.getCode()
+        handleEquationFunction(child)
+    } else if (child.getType() == DocumentApp.ElementType.EQUATION_SYMBOL) {
+      result = result + child.getType().toString()
+    } else {
+      result = result + '!MISSING ELEMENT!' + child.getType().toString() + " "
+    }
+  }
+  return result
 }
