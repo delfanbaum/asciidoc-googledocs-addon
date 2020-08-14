@@ -156,6 +156,13 @@ function asciidocHandleChild(child, i, nextChild) {
     result = result + asciidocHandleTable(child);
   } else if (child.getType() == DocumentApp.ElementType.LIST_ITEM) {
     result = result + asciidocHandleList(child);
+  } else if (child.getType() == DocumentApp.ElementType.EQUATION ||
+             child.getType() == DocumentApp.ElementType.EQUATION_FUNCTION	 ||
+             child.getType() ==
+                DocumentApp.ElementType.EQUATION_FUNCTION_ARGUMENT_SEPARATOR ||
+             child.getType() == DocumentApp.ElementType.EQUATION_SYMBOL
+            ) {
+    result = result + asciidocHandleEquation(child);
   } else {
     result = result + child.getText();
   }
@@ -281,7 +288,6 @@ function asciidocHandleFontStyle(text, offset, distinctContent) {
 
 function asciidocHandleTitle(child) {
   var result = '';
-//  var id = child.getLinkUrl() // how to get an ID for xrefs?
   var headingLevel;
   if (child.getText() && child.getText().trim() !== '') {
     if (child.getHeading() == DocumentApp.ParagraphHeading.TITLE) {
@@ -402,4 +408,8 @@ function asciidocHandleImage(paraElement) {
     figdesc = paraElement.getAltDescription()
   }
   return '\n[' + figtitle.replace(/ /g,'-').toLowerCase() + ']\n' + '.' + figtitle + figdesc + '\nIMAGE PLACEHOLDER';
+}
+
+function asciidocHandleEquation(equation) {
+  return "Equation here~!"
 }
